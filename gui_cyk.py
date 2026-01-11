@@ -4,9 +4,9 @@
 # ==============================================================================
 
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import messagebox
 # Mengimpor fungsi logika dari file Program_CYK_Table.py
-from Program_CYK_Table import get_bali_grammar, cyk_parse, get_cyk_table_string
+from Program_CYK_Table import get_bali_grammar, cyk_parse
 
 
 # =========================================================================
@@ -364,8 +364,8 @@ btn_proses.pack(side=tk.LEFT, padx=10)
 
 #Tombol lihat tree (Biru)
 btn_tree = tk.Button(frame_tombol, text="LIHAT PARSE TREE", command=aksi_lihat_tree, 
-                     bg="gray", fg="white", font=("Arial", 10, "bold"), padx=15, state=tk.DISABLED)
-btn_tree.pack(side=tk.LEFT, padx=5)
+                     bg="gray", fg="white", font=("Arial", 10, "bold"), padx=10, pady=5, state=tk.DISABLED)
+btn_tree.pack(side=tk.LEFT, padx=10)
 
 # Tombol Reset (Merah)
 btn_reset = tk.Button(frame_tombol, text="RESET", command=reset_gui, bg="#f44336", fg="white", font=("Arial", 10, "bold"), padx=10, pady=5)
