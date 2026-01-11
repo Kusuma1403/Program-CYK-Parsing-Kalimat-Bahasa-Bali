@@ -150,7 +150,7 @@ root.geometry("900x700") # Ukuran awal jendela
 my_grammar = get_bali_grammar() 
 
 # --- ELEMEN UI: JUDUL ---
-lbl_judul = tk.Label(root, text="PARSER KALIMAT BAHASA BALI", font=("Helvetica", 16, "bold"))
+lbl_judul = tk.Label(root, text="PARSER KALIMAT BAHASA BALI\nBERPREDIKAT FRASA ADJEKTIVA", font=("Helvetica", 16, "bold"))
 lbl_judul.pack(pady=10)
 
 # --- ELEMEN UI: INPUT AREA ---
