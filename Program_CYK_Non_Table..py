@@ -1,7 +1,6 @@
 def get_bali_grammar():
     """
     Mendefinisikan Grammar Bahasa Bali dalam bentuk CNF.
-    Nama 'Dayu Gek' telah diganti menjadi 'Widya'.
     Semua terminal dalam huruf kecil.
     """
     
@@ -32,7 +31,6 @@ def get_bali_grammar():
         "kebaya", "pura", "nasi", "paon", "atine"
     ]
     
-    # Penggantian: 'Dayu Gek' -> 'widya'
     list_prop_noun = [
         "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin"
     ]
@@ -50,12 +48,12 @@ def get_bali_grammar():
     ]
     
     list_noun_time = ["dibi", "ibi", "dugas", "sanja", "semeng", "jani", "tuni"]
-    list_adj_time = ["cerik"] # Sesuai prompt
+    list_adj_time = ["cerik"]
     list_num = ["sabilang"]
 
     # --- 2. LOGIKA FLATTENING (S, Pel, NP inherit terminal) ---
-    # Sesuai instruksi: Kata di NP masuk ke terminal S dan Pel
-    # Komponen NP biasanya: Noun, Pronoun, PropNoun, Part, Det
+    # Kata di NP masuk ke terminal S dan Pel
+    # Komponen NP: Noun, Pronoun, PropNoun, Part, Det
     terminals_np = list_noun + list_prop_noun + list_pronoun + list_part + list_det
     
     # S dan Pel juga bisa punya terminal sendiri sesuai CFG awal, 
@@ -127,7 +125,7 @@ def cyk_parse(sentence, grammar):
     Melakukan parsing kalimat menggunakan algoritma CYK.
     """
     # Tokenisasi (Split spasi & lowercase)
-    tokens = sentence.lower().split()
+    tokens = sentence.lower().strip().split()
     n = len(tokens)
     
     if n == 0:
