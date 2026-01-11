@@ -171,7 +171,6 @@ def cyk_parse(sentence, grammar):
     is_accepted = "K" in table[0][n-1]
     return is_accepted, table
 
-
 def run_batch_test(sentences, grammar):
     import time
     print("\n" + "="*85)

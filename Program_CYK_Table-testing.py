@@ -353,6 +353,53 @@ def get_cyk_table_string(table, tokens):
     output_buffer.close()
     return result_text
 
+
+###
+
+def run_batch_test(sentences, grammar):
+    import time
+    print("\n" + "="*85)
+    print(f"{'NO':<4} | {'KALIMAT INPUT':<50} | {'STATUS':<10} | {'WAKTU (s)':<10}")
+    print("="*85)
+    
+    jumlah_valid = 0
+    total_data = len(sentences)
+    
+    for i, kalimat in enumerate(sentences):
+        kalimat_bersih = kalimat.strip().lower()
+        
+        start_time = time.time()
+        
+        # PANGGIL FUNGSI CYK ANDA DISINI
+        # Asumsi fungsi utama Anda bernama cyk_parse
+        is_valid, _, tokens_baru = cyk_parse(kalimat_bersih, grammar) 
+        durasi = time.time() - start_time
+        
+        if is_valid:
+            status = "VALID"
+            jumlah_valid += 1
+        else:
+            status = "INVALID"
+            
+        # Cetak hasil per baris
+        print(f"{i+1:<4} | {' '.join(tokens_baru):<50} | {status:<10} | {durasi:.5f}")
+
+    # REKAPITULASI
+    print("="*85)
+    print(f"TOTAL DATA PENGUJIAN : {total_data}")
+    print(f"DITERIMA (VALID)     : {jumlah_valid}")
+    print(f"DITOLAK (INVALID)    : {total_data - jumlah_valid}")
+    
+    if total_data > 0:
+        akurasi = (jumlah_valid / total_data) * 100
+    else:
+        akurasi = 0
+        
+    print(f"TINGKAT AKURASI      : {akurasi:.2f}%")
+    print("="*85)
+
+
+###
 # ==========================================
 # BLOK UTAMA (MAIN) UNTUK PENGUJIAN LANGSUNG
 # ==========================================
@@ -360,22 +407,51 @@ if __name__ == "__main__":
     # 1. Memuat Grammar
     my_grammar = get_bali_grammar()
     
-    # 2. Input Pengguna
-    kalimat_input = input("Inputkan kalimat bahasa Bali: ").strip()
-    print(f"Memproses Kalimat: '{kalimat_input}'")
-    
-    # 3. Eksekusi CYK
-    # Perhatikan: sekarang menerima 3 return values
-    diterima, tabel_hasil, tokens_baru = cyk_parse(kalimat_input, my_grammar)
-    
-    print(f"Token setelah preprocessing: {tokens_baru}")
+    nama_file = 'dataset.txt'
 
-    # 4. Tampilkan Visualisasi Teks (Gunakan tokens_baru)
-    print(get_cyk_table_string(tabel_hasil, tokens_baru))
+    print(f"Sedang mencoba membuka file: {nama_file} ...")
     
-    # 5. Tampilkan Hasil Akhir
-    if diterima:
-        print("\n[HASIL] Kalimat VALID (Diterima oleh Grammar)")
-        print("Simbol 'K' ditemukan di puncak tabel.")
-    else:
-        print("\n[HASIL] Kalimat TIDAK VALID (Ditolak)")
+    # 2. Input Kalimat Uji Coba
+    # Contoh kalimat: "Jegeg sajan widya punika"
+    # P (AdjP Adv) + S (NP Det)
+    
+    try:
+        # Membuka file txt
+        with open(nama_file, 'r') as f:
+            # Membaca baris per baris & menghapus baris kosong
+            # line.strip() berguna menghapus "Enter" (\n) di akhir kalimat
+            kalimat_uji = [line.strip() for line in f if line.strip()]
+        
+        jumlah_data = len(kalimat_uji)
+        print(f"Berhasil memuat {jumlah_data} kalimat. Memulai pengujian...\n")
+        
+        # 3. Jalankan Fungsi Batch Test
+        # (Pastikan Anda sudah mencopy fungsi 'run_batch_test' yang saya berikan sebelumnya)
+        run_batch_test(kalimat_uji, my_grammar)
+
+    except FileNotFoundError:
+        print("\n[ERROR] File tidak ditemukan!")
+        print(f"Pastikan file '{nama_file}' ada di folder yang sama dengan script python ini.")
+        print("Atau cek apakah penulisan nama filenya sudah benar (misal: dataset.txt).")
+
+
+
+    # # 2. Input Pengguna
+    # kalimat_input = input("Inputkan kalimat bahasa Bali: ").strip()
+    # print(f"Memproses Kalimat: '{kalimat_input}'")
+    
+    # # 3. Eksekusi CYK
+    # # Perhatikan: sekarang menerima 3 return values
+    # diterima, tabel_hasil, tokens_baru = cyk_parse(kalimat_input, my_grammar)
+    
+    # print(f"Token setelah preprocessing: {tokens_baru}")
+
+    # # 4. Tampilkan Visualisasi Teks (Gunakan tokens_baru)
+    # print(get_cyk_table_string(tabel_hasil, tokens_baru))
+    
+    # # 5. Tampilkan Hasil Akhir
+    # if diterima:
+    #     print("\n[HASIL] Kalimat VALID (Diterima oleh Grammar)")
+    #     print("Simbol 'K' ditemukan di puncak tabel.")
+    # else:
+    #     print("\n[HASIL] Kalimat TIDAK VALID (Ditolak)")
