@@ -22,7 +22,7 @@ def get_bali_grammar():
         "jegeg", "lanying", "peteng", "dedet", "lantang", "tegeh", "cenik", 
         "kedas", "nyalang", "joh", "ening", "seger", "resik", "becik", "sungkan",
         "wicaksana", "putih", "tenang", "aget", "kasub", "gede", "demen", 
-        "seleg", "melah", "pait", "gedeg", "tresna", "bhakti", "dueg", "sayang", 
+        "seleg", "melah", "pait", "gedeg", "tresna", "bakti", "dueg", "sayang", 
         "jejeh", "kangen", "makesiab", "jemet", "penting", "seneng", "perlu", 
         "gelis", "satinut", "galak", "lek", "demit", "miik", "ngalub", "ririh", 
         "inguh", "rajin", "bengkung", "siteng", "nau", "wareg", "sebet", "cerik"
@@ -35,10 +35,10 @@ def get_bali_grammar():
     list_noun = [
         "cunguh", "kamar", "bok", "punyan", "umah", "kaca", "yeh", 
         "tukad", "griya", "kaki", "prabu", "rabi", "panyingakan", "dadong", 
-        "manah", "galah", "wastan", "lawar", "basa", "inggris", 
+        "manah", "galah", "wastan", "lawar", "basa", 
         "baju", "ubad", "adi", "timpal", "okan", "guru", "panak", 
-        "meme", "buku", "cicing", "anak", "keluarga", "pan", "pikobet", 
-        "pitulungan", "aturan", "desa", "sekolah", "tamiu",
+        "meme", "buku", "cicing", "anak", "kulawarga", "pan", "pikobet", 
+        "pitulung", "awig-awig", "desa", "sekolah", "tamiu",
         "parumahan", "yoga", "natah", "bunga", "sandat", "jumah", "piutang", 
         "lontar", "karya", "idup", "rerama", "kayu", "peken", 
         "kebaya", "pura", "nasi", "paon", "ati"
@@ -46,7 +46,7 @@ def get_bali_grammar():
     
     # Nama Diri (Proper Noun)
     list_prop_noun = [
-        "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin"
+        "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin", "inggris"
     ]
     
     # Kata Ganti (Pronoun) - Termasuk akhiran kepemilikan (-ne, -e, dll)
@@ -63,9 +63,9 @@ def get_bali_grammar():
     
     # Kata Kerja (Verb)
     list_verb = [
-        "polih", "ngajeng", "malajah", "memaca", "maan", "nepukin", "ngigel", 
-        "musik", "karaosang", "ngasuh", "melaib", "manutur", "megending", 
-        "mamaca", "ngidih", "tulung", "makidihan", "ngebekin", "magending", 
+        "polih", "ngajeng", "malajah", "maan", "nepukin", "ngigel", 
+        "musik", "karaosang", "ngempu", "malaib", "masatua", 
+        "mamaca", "ngidih", "tulung", "makidihang", "ngebekin", "magending", 
         "ngitungang", "nyurat", "ngamargiang", "negen", "nganggon", "nongos"
     ]
     
