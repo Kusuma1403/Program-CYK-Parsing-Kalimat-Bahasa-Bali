@@ -4,9 +4,9 @@
 # ==============================================================================
 
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import messagebox
 # Mengimpor fungsi logika dari file Program_CYK_Table.py
-from Program_CYK_Table import get_bali_grammar, cyk_parse, get_cyk_table_string
+from Program_CYK_Table import get_bali_grammar, cyk_parse
 
 
 # =========================================================================
@@ -16,66 +16,85 @@ from Program_CYK_Table import get_bali_grammar, cyk_parse, get_cyk_table_string
 def get_parse_tree_structure(grammar, table, tokens):
     """
     Mengubah Tabel CYK menjadi struktur data Pohon (Nested Tuple) secara rekursif.
-    Output: ('K', ('P', '...'), ('S', '...'))
+    Output contoh: ('K', ('P', 'jegeg'), ('S', 'tiang'))
     """
     n = len(tokens)
     
+    # Fungsi pembantu rekursif di dalam (nested function)
     def backtrack(simbol, i, j):
-        # 1. BASIS: Jika Daun (Kata Asli)
+        # 1. BASIS (Kondisi Berhenti): Jika i == j, berarti kita ada di level kata (Daun)
+        #    Ini terjadi ketika panjang substring adalah 1.
         if i == j:
             # Kembalikan tuple (Simbol, Kata_Asli)
+            # Contoh: ('Noun', 'buku')
             return (simbol, tokens[i])
 
-        # 2. REKURSI: Cari pembentuk (Anak)
+        # 2. REKURSI: Cari aturan mana yang membentuk simbol ini
         if simbol in grammar:
+            # Cek semua aturan produksi untuk simbol ini (misal K -> P S)
             for rhs in grammar[simbol]:
-                if len(rhs) == 2: # Hanya aturan biner A -> B C
+                
+                # Kita hanya perhatikan aturan biner A -> B C (2 non-terminal di RHS) karena ini CNF
+                if len(rhs) == 2: 
                     B, C = rhs[0], rhs[1]
-                    # Cari titik potong k
+                    
+                    # Kita harus mencari titik potong 'k' yang valid.
+                    # Substring dari i sampai j dipecah menjadi [i...k] dan [k+1...j]
                     for k in range(i, j):
+                        # CEK VALIDITAS:
+                        # Apakah variabel B ada di sel tabel kiri (i, k)?
+                        # DAN variabel C ada di sel tabel kanan (k+1, j)?
                         if B in table[i][k] and C in table[k+1][j]:
-                            # REKURSI KE ANAK
+                            
+                            # Jika ya, berarti kita menemukan jalurnya!
+                            # Lakukan rekursi ke anak kiri (B) dan anak kanan (C)
                             left_node = backtrack(B, i, k)
                             right_node = backtrack(C, k+1, j)
                             
-                            # Jika jalur ini valid (tidak buntu)
+                            # Jika kedua anak berhasil mengembalikan node (tidak None)
                             if left_node and right_node:
+                                # Kembalikan struktur pohon: (Induk, AnakKiri, AnakKanan)
                                 return (simbol, left_node, right_node)
-        return None
+        return None # Jika tidak ada jalur yang valid
 
-    # Mulai dari simbol Start 'K' di puncak tabel
+    # Mulai proses dari simbol awal 'K' (Kalimat) yang ada di puncak tabel (0, n-1)
     if 'K' in table[0][n-1]:
         return backtrack('K', 0, n-1)
-    return None
+    
+    return None # Jika simbol K tidak ada di puncak, berarti kalimat tidak valid
 
 def open_parse_tree_window(root_window, tree_structure, tokens):
     """
     Membuka jendela popup Parse Tree dengan algoritma tata letak 'Bottom-Up'.
     Posisi X node dihitung berdasarkan posisi kata, mencegah tumpang tindih.
     """
+    
+    # Validasi jika struktur pohon kosong
     if not tree_structure:
         messagebox.showerror("Error", "Gagal membentuk struktur pohon!")
         return
 
+    # Buat jendela baru (Toplevel) di atas jendela utama
     tree_win = tk.Toplevel(root_window)
     tree_win.title("Parse Tree & Pola Kalimat")
     
-    # KONFIGURASI JARAK
-    X_SPACING = 140       # Jarak horizontal antar kata (diperlebar agar aman)
-    Y_SPACING = 100       # Jarak vertikal antar level
-    START_Y = 60          # Margin atas
+    # --- KONFIGURASI VISUAL ---
+    X_SPACING = 140       # Jarak horizontal antar kata (daun)
+    Y_SPACING = 100       # Jarak vertikal antar level (tingkat kedalaman pohon)
+    START_Y = 60          # Margin atas untuk Root Node
     
-    # Hitung lebar total canvas berdasarkan jumlah kata
-    # Minimal 800px biar tidak kekecilan
+    # Hitung ukuran canvas agar muat semua kata
     total_width = max(800, len(tokens) * X_SPACING + 100)
-    total_height = max(600, (len(tokens) * 50) + 200) # Estimasi tinggi
+    total_height = max(600, (len(tokens) * 50) + 200) 
     
-    # Setup Window & Canvas
+    # Atur ukuran jendela (maksimal 1300px biar tidak memenuhi layar)
     window_width = min(1300, total_width + 50)
     tree_win.geometry(f"{window_width}x650")
     
+    # Buat Canvas dengan Scrollbar (Penting jika pohonnya lebar)
     c = tk.Canvas(tree_win, bg="white", scrollregion=(0, 0, total_width, total_height))
     
+    # Konfigurasi Scrollbar Horizontal & Vertikal
     hbar = tk.Scrollbar(tree_win, orient=tk.HORIZONTAL, command=c.xview)
     hbar.pack(side=tk.BOTTOM, fill=tk.X)
     vbar = tk.Scrollbar(tree_win, orient=tk.VERTICAL, command=c.yview)
@@ -83,90 +102,90 @@ def open_parse_tree_window(root_window, tree_structure, tokens):
     c.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     c.pack(fill=tk.BOTH, expand=True)
 
-    # --- VARIABEL PELACAK POSISI ---
-    # Kita gunakan list mutable agar bisa diubah di dalam fungsi rekursif
-    # leaf_tracker[0] akan menyimpan indeks kata ke-berapa yang sedang diproses
+    # --- VARIABEL PELACAK POSISI DAUN ---
+    # Menggunakan list mutable [0] agar nilainya bisa diubah di dalam fungsi rekursif.
+    # Ini berfungsi sebagai counter: "Sekarang kita sedang menggambar kata ke-berapa?"
     leaf_tracker = [0] 
 
+    # --- FUNGSI PENGGAMBAR REKURSIF ---
     def recursive_draw(node, current_y):
         """
-        Fungsi Rekursif Pintar:
-        1. Turun ke bawah dulu sampai ketemu kata (Daun).
-        2. Tentukan posisi X kata berdasarkan urutan.
-        3. Posisi Parent adalah rata-rata dari posisi Children.
-        4. Return posisi X node ini ke pemanggilnya.
+        Fungsi ini menggambar node dan mengembalikan posisi X-nya.
         """
-        label = node[0]
-        my_x = 0
+        label = node[0]  # Label Node (misal: 'NP', 'VP', 'jegeg')
+        my_x = 0         # Posisi X node ini (akan dihitung di bawah)
         
-        # --- KASUS 1: NODE CABANG BINER (Punya Kiri & Kanan) ---
+        # --- KASUS 1: NODE CABANG BINER (Punya Anak Kiri & Kanan) ---
+        # Struktur: ('K', left_node, right_node) -> Panjang tuple 3
         if len(node) == 3:
             left_child = node[1]
             right_child = node[2]
             
-            # Rekursi ke anak kiri & kanan untuk dapatkan posisi X mereka
+            # REKURSI: Gambar anak-anak dulu untuk tahu posisi mereka
             x_left = recursive_draw(left_child, current_y + Y_SPACING)
             x_right = recursive_draw(right_child, current_y + Y_SPACING)
             
-            # Posisi saya ada di tengah-tengah anak
+            # LOGIKA INTI: Posisi Parent ada di TENGAH-TENGAH kedua anaknya
             my_x = (x_left + x_right) / 2
             
-            # Gambar Garis ke Anak
-            # Garis digambar DULUAN supaya tertimpa oleh oval (jadi rapi)
+            # Gambar Garis Penghubung (Parent ke Anak)
             c.create_line(my_x, current_y + 20, x_left, current_y + Y_SPACING - 20, fill="gray", width=2)
             c.create_line(my_x, current_y + 20, x_right, current_y + Y_SPACING - 20, fill="gray", width=2)
 
-        # --- KASUS 2: NODE DAUN (Label -> Kata) ---
-        # Bisa format ('NP', 'buku') atau ('NP', ('Noun', 'buku')) -> Unary
-        # Kita cek apakah elemen kedua adalah String (Kata)
+        # --- KASUS 2: NODE DAUN (Kata Asli) ---
+        # Struktur: ('Adj', 'jegeg') -> Panjang 2, elemen kedua adalah String
         elif len(node) == 2 and isinstance(node[1], str):
             kata = node[1]
             
-            # Hitung X berdasarkan urutan kata (Leaf Index)
-            # Rumus: Margin Kiri + (Urutan * Jarak)
+            # Hitung posisi X berdasarkan urutan kata
+            # Rumus: Margin + (Urutan * Jarak)
             my_x = 80 + (leaf_tracker[0] * X_SPACING)
             
-            # Naikkan counter untuk kata berikutnya
+            # Naikkan counter agar kata berikutnya digambar lebih ke kanan
             leaf_tracker[0] += 1
             
-            # Gambar Garis Putus-putus ke Kata
+            # Gambar garis putus-putus vertikal ke arah kata
             y_kata = current_y + 60
             c.create_line(my_x, current_y + 20, my_x, y_kata - 10, fill="black", dash=(2, 2))
             
-            # Teks Kata Asli (Biru Miring)
+            # Tulis Kata Asli di bawah node
             c.create_text(my_x, y_kata, text=kata, font=("Arial", 11, "italic", "bold"), fill="blue")
 
-        # --- KASUS 3: NODE UNARY (Label -> Node Lain) ---
-        # Contoh: NP -> Pronoun (tanpa cabang lain)
+        # --- KASUS 3: NODE UNARY (Satu Anak) ---
+        # Struktur: ('NP', ('Noun', 'buku')) -> Panjang 2, elemen kedua adalah Tuple (Node lain)
         elif len(node) == 2 and isinstance(node[1], tuple):
             child_node = node[1]
             
-            # Rekursi lurus ke bawah
+            # Rekursi ke anak tunggal
             x_child = recursive_draw(child_node, current_y + Y_SPACING)
             
-            # Posisi X saya sama dengan anak (lurus vertikal)
+            # Posisi Parent LURUS VERTIKAL dengan anaknya
             my_x = x_child
             
             # Gambar Garis Lurus
             c.create_line(my_x, current_y + 20, x_child, current_y + Y_SPACING - 20, fill="gray", width=2)
 
-        # --- MENGGAMBAR OVAL (NODE) ---
-        # Ukuran Oval Dinamis mengikuti panjang teks
+        # --- MENGGAMBAR NODE (Lingkaran/Oval) ---
+        # Setelah posisi X (my_x) diketahui, gambar lingkarannya
+        
+        # Hitung lebar oval berdasarkan panjang teks label (agar rapi)
         text_len = len(label)
-        radius_x = max(24, (text_len * 6) + 12) # Lebar menyesuaikan teks
+        radius_x = max(24, (text_len * 6) + 12) 
         radius_y = 20
         
+        # Gambar Oval
         c.create_oval(my_x - radius_x, current_y - radius_y, 
                       my_x + radius_x, current_y + radius_y, 
                       fill="#E0F7FA", outline="black", width=1.5)
         
+        # Tulis Label di tengah Oval
         c.create_text(my_x, current_y, text=label, font=("Arial", 10, "bold"))
         
-        # Kembalikan posisi X saya agar Parent di atas bisa menghitung tengahnya
+        # PENTING: Kembalikan posisi my_x agar bisa dipakai oleh Parent di level atasnya
         return my_x
 
-    # MULAI PROSES GAMBAR DARI ROOT
-    # Root ditaruh di START_Y, posisi X-nya akan otomatis dihitung oleh fungsi
+    # PANGGILAN PERTAMA: Mulai menggambar dari Root (Puncak Pohon)
+    # Root ditaruh di ketinggian START_Y, posisi X-nya akan otomatis dihitung
     recursive_draw(tree_structure, START_Y)
 
 
@@ -339,7 +358,7 @@ root.geometry("900x700") # Ukuran awal jendela
 my_grammar = get_bali_grammar() 
 
 # --- ELEMEN UI: JUDUL ---
-lbl_judul = tk.Label(root, text="PARSER KALIMAT BAHASA BALI", font=("Helvetica", 16, "bold"))
+lbl_judul = tk.Label(root, text="PARSER KALIMAT BAHASA BALI\nBERPREDIKAT FRASA ADJEKTIVA", font=("Helvetica", 16, "bold"))
 lbl_judul.pack(pady=10)
 
 # --- ELEMEN UI: INPUT AREA ---
@@ -364,8 +383,8 @@ btn_proses.pack(side=tk.LEFT, padx=10)
 
 #Tombol lihat tree (Biru)
 btn_tree = tk.Button(frame_tombol, text="LIHAT PARSE TREE", command=aksi_lihat_tree, 
-                     bg="gray", fg="white", font=("Arial", 10, "bold"), padx=15, state=tk.DISABLED)
-btn_tree.pack(side=tk.LEFT, padx=5)
+                     bg="gray", fg="white", font=("Arial", 10, "bold"), padx=10, pady=5, state=tk.DISABLED)
+btn_tree.pack(side=tk.LEFT, padx=10)
 
 # Tombol Reset (Merah)
 btn_reset = tk.Button(frame_tombol, text="RESET", command=reset_gui, bg="#f44336", fg="white", font=("Arial", 10, "bold"), padx=10, pady=5)
