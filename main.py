@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
-from Program_CYK_Table import get_bali_grammar, cyk_parse, get_parse_tree_structure
+from cyk_parser import get_bali_grammar, cyk_parse, get_parse_tree_structure
 
 # Set appearance mode and default color theme
 ctk.set_appearance_mode("Dark")
