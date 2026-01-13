@@ -25,11 +25,11 @@ def get_bali_grammar():
         "seleg", "melah", "pait", "gedeg", "tresna", "bakti", "dueg", "sayang", 
         "jejeh", "kangen", "makesiab", "jemet", "penting", "seneng", "perlu", 
         "gelis", "satinut", "galak", "lek", "demit", "miik", "ngalub", "ririh", 
-        "inguh", "rajin", "bengkung", "siteng", "nau", "wareg", "sebet", "cerik"
+        "inguh", "rajin", "bengkung", "siteng", "nau", "wareg", "sebet", "cerik", "mekelo", "sue"
     ]
     
     # Kata Keterangan (Adverb)
-    list_adv = ["sajan", "pisan", "gati"]
+    list_adv = ["sajan", "pisan", "gati", "sesai"]
     
     # Kata Benda (Noun) - Termasuk benda konkret dan abstrak
     list_noun = [
@@ -41,12 +41,19 @@ def get_bali_grammar():
         "pitulung", "awig-awig", "desa", "sekolah", "tamiu",
         "parumahan", "yoga", "natah", "bunga", "sandat", "jumah", "piutang", 
         "lontar", "karya", "idup", "rerama", "kayu", "peken", 
-        "kebaya", "pura", "nasi", "paon", "ati"
+        "kebaya", "pura", "nasi", "paon", "ati", "petani", "buah", "stroberi", "tegal", "agung", 
+        "dagang", "canang", "bapa", "tetamian", "keris", "kemimitan", "paica", 
+        "due", "kampuh", "sutra", "puri", "tukang", "tenun", "kain", "endek", 
+        "wantilan", "gangsa", "pragina", "kelas", "paplajahan", "seni", "uyah", 
+        "sanggah", "tanding", "tulis", "jukung", "sisin", "pasih", "mobil", 
+        "lapangan", "perbekel", "tiban", "umur", "ubuhan", "meong", "meter", 
+        "tembok", "jam", "rapat", "ujian", "pemangku", "ukud"
     ]
     
     # Nama Diri (Proper Noun)
     list_prop_noun = [
-        "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin", "inggris"
+        "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin", "inggris",
+        "desak", "gede", "kadek", "sanur"   
     ]
     
     # Kata Ganti (Pronoun) - Termasuk akhiran kepemilikan (-ne, -e, dll)
@@ -66,17 +73,18 @@ def get_bali_grammar():
         "polih", "ngajeng", "malajah", "maan", "nepukin", "ngigel", 
         "musik", "karaosang", "ngempu", "malaib", "masatua", 
         "mamaca", "ngidih", "tulung", "makidihang", "ngebekin", "magending", 
-        "ngitungang", "nyurat", "ngamargiang", "negen", "nganggon", "nongos"
+        "ngitungang", "nyurat", "ngamargiang", "negen", "nganggon", "nongos", "ngalapang",
+        "nyilihang", "ngai", "nyetir", "nyalon", "dadi"
     ]
     
     # Kata Benda Waktu (Temporal Noun)
-    list_noun_time = ["dibi", "ibi", "dugas", "sanja", "semeng", "jani", "tuni"]
+    list_noun_time = ["dibi", "ibi", "dugas", "sanja", "semeng", "jani", "tuni", "mani", "tengai"]
 
     # Kata Sifat Waktu (Temporal Adjective)
     list_adj_time = ["cerik"] 
 
     # Kata Bilangan (Numeral)
-    list_num = ["sabilang"]
+    list_num = ["sabilang","molas", "dasa", "akilo", "telu", "limang", "telung", "dua", "duang"]
 
     # --- 2. LOGIKA FLATTENING (Penyederhanaan Aturan Terminal) ---
     # CYK mengharuskan aturan dalam bentuk A -> a (Non-Terminal -> Terminal).
@@ -356,48 +364,84 @@ def get_cyk_table_string(table, tokens):
 
 ###
 
-def run_batch_test(sentences, grammar):
+def run_full_evaluation(positive_sentences, negative_sentences, grammar):
+    """
+    Fungsi untuk menjalankan skenario evaluasi lengkap dengan Confusion Matrix.
+    """
     import time
-    print("\n" + "="*85)
-    print(f"{'NO':<4} | {'KALIMAT INPUT':<50} | {'STATUS':<10} | {'WAKTU (s)':<10}")
-    print("="*85)
+
+    # Inisialisasi Counter
+    TP = 0  # True Positive (Data Positif, Terdeteksi Valid)
+    FN = 0  # False Negative (Data Positif, Terdeteksi Invalid/Salah)
+    TN = 0  # True Negative (Data Negatif, Terdeteksi Invalid)
+    FP = 0  # False Positive (Data Negatif, Terdeteksi Valid/Salah)
+
+    print("\n" + "="*105)
+    print(f"| {'NO':<4} | {'KALIMAT INPUT':<45} | {'JENIS DATA':<12} | {'PREDIKSI':<10} | {'HASIL':<15} |")
+    print("="*105)
+
+    counter = 1
     
-    jumlah_valid = 0
-    total_data = len(sentences)
-    
-    for i, kalimat in enumerate(sentences):
+    # --- TAHAP 1: PENGUJIAN DATA POSITIF (Harapannya VALID) ---
+    for kalimat in positive_sentences:
         kalimat_bersih = kalimat.strip().lower()
         
-        start_time = time.time()
-        
-        # PANGGIL FUNGSI CYK ANDA DISINI
-        # Asumsi fungsi utama Anda bernama cyk_parse
-        is_valid, _, tokens_baru = cyk_parse(kalimat_bersih, grammar) 
-        durasi = time.time() - start_time
-        
-        if is_valid:
-            status = "VALID"
-            jumlah_valid += 1
-        else:
-            status = "INVALID"
-            
-        # Cetak hasil per baris
-        print(f"{i+1:<4} | {' '.join(tokens_baru):<50} | {status:<10} | {durasi:.5f}")
+        # Jalankan CYK
+        is_valid, _, tokens_baru = cyk_parse(kalimat_bersih, grammar)
+        kalimat_display = ' '.join(tokens_baru)
 
-    # REKAPITULASI
-    print("="*85)
-    print(f"TOTAL DATA PENGUJIAN : {total_data}")
-    print(f"DITERIMA (VALID)     : {jumlah_valid}")
-    print(f"DITOLAK (INVALID)    : {total_data - jumlah_valid}")
-    
+        if is_valid:
+            prediksi = "VALID"
+            hasil_evaluasi = "BENAR (TP)"
+            TP += 1
+        else:
+            prediksi = "INVALID"
+            hasil_evaluasi = "SALAH (FN)"
+            FN += 1
+        
+        print(f"| {counter:<4} | {kalimat_display:<45} | {'POSITIF':<12} | {prediksi:<10} | {hasil_evaluasi:<15} |")
+        counter += 1
+
+    # --- TAHAP 2: PENGUJIAN DATA NEGATIF (Harapannya INVALID) ---
+    for kalimat in negative_sentences:
+        kalimat_bersih = kalimat.strip().lower()
+        
+        # Jalankan CYK
+        is_valid, _, tokens_baru = cyk_parse(kalimat_bersih, grammar)
+        kalimat_display = ' '.join(tokens_baru)
+
+        if not is_valid:  # Jika sistem menolak, itu bagus!
+            prediksi = "INVALID"
+            hasil_evaluasi = "BENAR (TN)"
+            TN += 1
+        else:             # Jika sistem menerima, itu salah!
+            prediksi = "VALID"
+            hasil_evaluasi = "SALAH (FP)"
+            FP += 1
+            
+        print(f"| {counter:<4} | {kalimat_display:<45} | {'NEGATIF':<12} | {prediksi:<10} | {hasil_evaluasi:<15} |")
+        counter += 1
+
+    # --- HITUNG AKURASI & TAMPILKAN LAPORAN ---
+    total_data = TP + FN + TN + FP
     if total_data > 0:
-        akurasi = (jumlah_valid / total_data) * 100
+        akurasi = ((TP + TN) / total_data) * 100
     else:
         akurasi = 0
-        
-    print(f"TINGKAT AKURASI      : {akurasi:.2f}%")
-    print("="*85)
 
+    print("="*105)
+    print("\n" + "="*40)
+    print("      LAPORAN EVALUASI MODEL")
+    print("="*40)
+    print(f"Total Data Uji      : {total_data} Kalimat")
+    print("-" * 40)
+    print(f"1. True Positive (TP)  : {TP:<3} (Positif -> Valid)")
+    print(f"2. False Negative (FN) : {FN:<3} (Positif -> Invalid)")
+    print(f"3. True Negative (TN)  : {TN:<3} (Negatif -> Invalid)")
+    print(f"4. False Positive (FP) : {FP:<3} (Negatif -> Valid)")
+    print("-" * 40)
+    print(f"TINGKAT AKURASI        : {akurasi:.2f}%")
+    print("="*40)
 
 ###
 # ==========================================
@@ -407,33 +451,37 @@ if __name__ == "__main__":
     # 1. Memuat Grammar
     my_grammar = get_bali_grammar()
     
-    nama_file = 'dataset.txt'
+    # Nama File
+    file_positif = 'dataset_positif.txt' # Ubah nama file Anda yang berisi 50 kalimat disini
+    file_negatif = 'dataset_negatif.txt' # Buat file baru berisi 20 kalimat salah
 
-    print(f"Sedang mencoba membuka file: {nama_file} ...")
-    
-    # 2. Input Kalimat Uji Coba
-    # Contoh kalimat: "Jegeg sajan widya punika"
-    # P (AdjP Adv) + S (NP Det)
-    
+    # List Penampung
+    data_positif = []
+    data_negatif = []
+
+    print("Sedang memuat dataset...")
+
+    # 2. Membaca File Positif
     try:
-        # Membuka file txt
-        with open(nama_file, 'r') as f:
-            # Membaca baris per baris & menghapus baris kosong
-            # line.strip() berguna menghapus "Enter" (\n) di akhir kalimat
-            kalimat_uji = [line.strip() for line in f if line.strip()]
-        
-        jumlah_data = len(kalimat_uji)
-        print(f"Berhasil memuat {jumlah_data} kalimat. Memulai pengujian...\n")
-        
-        # 3. Jalankan Fungsi Batch Test
-        # (Pastikan Anda sudah mencopy fungsi 'run_batch_test' yang saya berikan sebelumnya)
-        run_batch_test(kalimat_uji, my_grammar)
-
+        with open(file_positif, 'r') as f:
+            data_positif = [line.strip() for line in f if line.strip()]
+        print(f"[OK] Berhasil memuat {len(data_positif)} kalimat positif.")
     except FileNotFoundError:
-        print("\n[ERROR] File tidak ditemukan!")
-        print(f"Pastikan file '{nama_file}' ada di folder yang sama dengan script python ini.")
-        print("Atau cek apakah penulisan nama filenya sudah benar (misal: dataset.txt).")
+        print(f"[ERROR] File '{file_positif}' tidak ditemukan!")
 
+    # 3. Membaca File Negatif
+    try:
+        with open(file_negatif, 'r') as f:
+            data_negatif = [line.strip() for line in f if line.strip()]
+        print(f"[OK] Berhasil memuat {len(data_negatif)} kalimat negatif.")
+    except FileNotFoundError:
+        print(f"[WARNING] File '{file_negatif}' tidak ditemukan! Pengujian hanya berjalan parsial.")
+
+    # 4. Jalankan Evaluasi
+    if data_positif or data_negatif:
+        run_full_evaluation(data_positif, data_negatif, my_grammar)
+    else:
+        print("Tidak ada data untuk diuji.")
 
 
     # # 2. Input Pengguna
