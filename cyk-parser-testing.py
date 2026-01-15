@@ -37,7 +37,7 @@ def get_bali_grammar():
         "tukad", "griya", "kaki", "prabu", "rabi", "panyingakan", "dadong", 
         "manah", "galah", "wastan", "lawar", "basa", 
         "baju", "ubad", "adi", "timpal", "okan", "guru", "panak", 
-        "meme", "buku", "cicing", "anak", "kulawarga", "pan", "pikobet", 
+        "meme", "buku", "cicing", "anak", "kulawarga", "pan", "pikobet",
         "pitulung", "awig-awig", "desa", "sekolah", "tamiu",
         "parumahan", "yoga", "natah", "bunga", "sandat", "jumah", "piutang", 
         "lontar", "karya", "idup", "rerama", "kayu", "peken", 
