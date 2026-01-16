@@ -1,8 +1,8 @@
-# 📘 Program CYK Parsing Kalimat Bahasa Bali Berpredikat Frasa Adjektiva
+# 📘 Aplikasi CYK Parsing Kalimat Bahasa Bali Berpredikat Frasa Adjektiva
 
 ## 📌 Tentang Aplikasi
 
-**Program CYK Parsing Kalimat Bahasa Bali Berpredikat Frasa Adjektiva** adalah sebuah aplikasi berbasis Python yang dirancang untuk melakukan pengecekan dan analisis struktur grammar kalimat sederhana berpredikat frasa adjektiva dalam Bahasa Bali menggunakan **Context-Free Grammar (CFG)** dan **algoritma Cocke–Younger–Kasami (CYK)**.
+**Aplikasi CYK Parsing Kalimat Bahasa Bali Berpredikat Frasa Adjektiva** adalah sebuah aplikasi berbasis Python yang dirancang untuk melakukan pengecekan dan analisis struktur grammar kalimat sederhana berpredikat frasa adjektiva dalam Bahasa Bali menggunakan **Context-Free Grammar (CFG)** dan **algoritma Cocke–Younger–Kasami (CYK)**.
 
 ---
 
@@ -44,11 +44,11 @@
 ## 📂 Struktur Direktori Proyek
 
 ```
-Program-CYK-Parsing-Kalimat-Bahasa-Bali/
+Aplikasi-CYK-Parsing-Kalimat-Bahasa-Bali/
 │
 ├── main.py                   # Program utama untuk menjalankan parsing CYK
-├── cyk-parser.py             # Implementasi algoritma CYK dan grammar CNF Bahasa Bali
-├── cyk-parser-testing.py     # Pengujian parsing menggunakan dataset positif & negatif
+├── cyk-parser.py             # Implementasi algoritma CYK dan grammar CNF Bahasa Bali (AdjP)
+├── evaluation.py             # Evaluasi model menggunakan dataset positif & negatif
 ├── dataset_positif.txt       # Dataset kalimat valid Bahasa Bali
 ├── dataset_negatif.txt       # Dataset kalimat tidak valid Bahasa Bali
 ├── requirements.txt          # Daftar dependensi Python
@@ -63,8 +63,8 @@ Program-CYK-Parsing-Kalimat-Bahasa-Bali/
 - **cyk-parser.py**
   Berisi implementasi utama algoritma **Cocke–Younger–Kasami (CYK)**. Pada file ini terdapat fungsi `get_bali_grammar()` yang mendefinisikan aturan **Context-Free Grammar (CFG)** Bahasa Bali dalam bentuk **Chomsky Normal Form (CNF)**, serta fungsi-fungsi pendukung untuk proses parsing.
 
-- **cyk-parser-testing.py**
-  Digunakan untuk melakukan pengujian sistem parsing secara otomatis menggunakan dataset kalimat valid dan tidak valid. File ini juga memiliki fungsi `get_bali_grammar()` sebagai sumber aturan grammar CNF yang sama dengan file utama, sehingga konsistensi grammar tetap terjaga saat evaluasi.
+- **evaluation.py**
+  Berisi kode evaluasi model untuk menguji performa parser CYK menggunakan dataset_positif.txt dan dataset_negatif.txt. File ini melakukan pengujian otomatis terhadap kalimat valid dan tidak valid untuk menilai kemampuan sistem dalam membedakan struktur sintaksis yang benar dan salah secara konsisten.
 
 - **dataset_positif.txt**
   Berisi kumpulan kalimat Bahasa Bali yang **sesuai** dengan aturan grammar (kalimat valid). Dataset ini digunakan untuk menguji keberhasilan sistem dalam mengenali kalimat yang benar secara sintaksis.
@@ -77,7 +77,7 @@ Program-CYK-Parsing-Kalimat-Bahasa-Bali/
 
 ---
 
-## 🚀 Cara Instalasi dan Menjalankan Program
+## 🚀 Cara Instalasi dan Menjalankan Aplikasi
 
 ### 🔧 Prasyarat Sistem
 
@@ -160,16 +160,18 @@ Dataset kalimat disimpan dalam dua berkas teks terpisah:
   Berisi kumpulan kalimat sederhana Bahasa Bali yang **valid secara sintaksis** dan sesuai dengan aturan grammar yang telah didefinisikan, khususnya kalimat dengan **predikat Frasa Adjektiva (AdjP)**.
 
 - **dataset_negatif.txt**
-  Berisi kumpulan kalimat Bahasa Bali yang **tidak valid secara sintaksis**, baik karena urutan kata yang tidak sesuai, penggunaan kategori kata yang salah, maupun pelanggaran terhadap struktur grammar.
+  Berisi kumpulan kalimat Bahasa Bali yang **tidak sesuai dengan fokus grammar penelitian**, yaitu kalimat yang memiliki predikat **selain Frasa Adjektiva (AdjP)**. Secara khusus, dataset ini mencakup kalimat dengan predikat berupa:
 
-Dataset ini digunakan terutama pada proses **pengujian dan evaluasi** sistem melalui file `cyk-parser-testing.py` untuk mengukur kemampuan parser dalam membedakan kalimat yang benar dan salah.
+  - Frasa Nomina (**NP**)
+  - Frasa Verba (**VP**)
+  - Frasa Preposisi (**PP**)
+  - Frasa Numeralia (**NumP**)
+
+Dataset ini digunakan terutama pada proses **pengujian dan evaluasi** sistem melalui file `evaluation.py` untuk mengukur kemampuan parser dalam membedakan kalimat yang benar dan salah.
 
 ### 📘 Kamus Kata dan Aturan Grammar
 
-Kamus kata dan aturan grammar tidak disimpan dalam file terpisah, melainkan didefinisikan langsung dalam kode program melalui fungsi `get_bali_grammar()` yang terdapat pada:
-
-- `cyk-parser.py`
-- `cyk-parser-testing.py`
+Kamus kata dan aturan grammar tidak disimpan dalam file terpisah, melainkan didefinisikan langsung dalam kode program melalui fungsi `get_bali_grammar()` yang terdapat pada `cyk-parser.py`
 
 Aturan grammar disusun dalam bentuk **Context-Free Grammar (CFG)** yang telah dikonversi ke **Chomsky Normal Form (CNF)** agar kompatibel dengan algoritma CYK. Kamus kata mencakup pemetaan:
 
