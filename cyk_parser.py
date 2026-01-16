@@ -25,11 +25,11 @@ def get_bali_grammar():
         "seleg", "melah", "pait", "gedeg", "tresna", "bakti", "dueg", "sayang", 
         "jejeh", "kangen", "makesiab", "jemet", "penting", "seneng", "perlu", 
         "gelis", "satinut", "galak", "lek", "demit", "miik", "ngalub", "ririh", 
-        "inguh", "rajin", "bengkung", "siteng", "nau", "wareg", "sebet", "cerik"
+        "inguh", "rajin", "bengkung", "siteng", "nau", "wareg", "sebet", "cerik", "mekelo", "sue"
     ]
     
     # Kata Keterangan (Adverb)
-    list_adv = ["sajan", "pisan", "gati"]
+    list_adv = ["sajan", "pisan", "gati", "sesai"]
     
     # Kata Benda (Noun) - Termasuk benda konkret dan abstrak
     list_noun = [
@@ -37,16 +37,23 @@ def get_bali_grammar():
         "tukad", "griya", "kaki", "prabu", "rabi", "panyingakan", "dadong", 
         "manah", "galah", "wastan", "lawar", "basa", 
         "baju", "ubad", "adi", "timpal", "okan", "guru", "panak", 
-        "meme", "buku", "cicing", "anak", "kulawarga", "pan", "pikobet", 
+        "meme", "buku", "cicing", "anak", "kulawarga", "pan", "pikobet",
         "pitulung", "awig-awig", "desa", "sekolah", "tamiu",
         "parumahan", "yoga", "natah", "bunga", "sandat", "jumah", "piutang", 
         "lontar", "karya", "idup", "rerama", "kayu", "peken", 
-        "kebaya", "pura", "nasi", "paon", "ati"
+        "kebaya", "pura", "nasi", "paon", "ati", "petani", "buah", "stroberi", "tegal", "agung", 
+        "dagang", "canang", "bapa", "tetamian", "keris", "kemimitan", "paica", 
+        "due", "kampuh", "sutra", "puri", "tukang", "tenun", "kain", "endek", 
+        "wantilan", "gangsa", "pragina", "kelas", "paplajahan", "seni", "uyah", 
+        "sanggah", "tanding", "tulis", "jukung", "sisin", "pasih", "mobil", 
+        "lapangan", "perbekel", "tiban", "umur", "ubuhan", "meong", "meter", 
+        "tembok", "jam", "rapat", "ujian", "pemangku", "ukud"
     ]
     
     # Nama Diri (Proper Noun)
     list_prop_noun = [
-        "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin", "inggris"
+        "widya", "putu", "made", "wayan", "nukarna", "bagya", "yogi", "kevin", "inggris",
+        "desak", "gede", "kadek", "sanur"   
     ]
     
     # Kata Ganti (Pronoun) - Termasuk akhiran kepemilikan (-ne, -e, dll)
@@ -66,17 +73,18 @@ def get_bali_grammar():
         "polih", "ngajeng", "malajah", "maan", "nepukin", "ngigel", 
         "musik", "karaosang", "ngempu", "malaib", "masatua", 
         "mamaca", "ngidih", "tulung", "makidihang", "ngebekin", "magending", 
-        "ngitungang", "nyurat", "ngamargiang", "negen", "nganggon", "nongos"
+        "ngitungang", "nyurat", "ngamargiang", "negen", "nganggon", "nongos", "ngalapang",
+        "nyilihang", "ngai", "nyetir", "nyalon", "dadi"
     ]
     
     # Kata Benda Waktu (Temporal Noun)
-    list_noun_time = ["dibi", "ibi", "dugas", "sanja", "semeng", "jani", "tuni"]
+    list_noun_time = ["dibi", "ibi", "dugas", "sanja", "semeng", "jani", "tuni", "mani", "tengai"]
 
     # Kata Sifat Waktu (Temporal Adjective)
     list_adj_time = ["cerik"] 
 
     # Kata Bilangan (Numeral)
-    list_num = ["sabilang"]
+    list_num = ["sabilang","molas", "dasa", "akilo", "telu", "limang", "telung", "dua", "duang"]
 
     # --- 2. LOGIKA FLATTENING (Penyederhanaan Aturan Terminal) ---
     # CYK mengharuskan aturan dalam bentuk A -> a (Non-Terminal -> Terminal).

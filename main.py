@@ -127,7 +127,7 @@ class BaliParserApp(ctk.CTk):
         self.lbl_status = ctk.CTkLabel(
             self.input_frame,
             text="Menunggu input kalimat...",
-            font=ctk.CTkFont(size=12, slant="italic"),
+            font=ctk.CTkFont(size=16, slant="italic"),
             text_color="gray"
         )
         self.lbl_status.grid(row=1, column=0, columnspan=3, pady=(5, 0), sticky="w")
@@ -196,10 +196,10 @@ class BaliParserApp(ctk.CTk):
     def start_parsing(self):
         sentence = self.entry_sentence.get().strip()
         if not sentence:
-            self.lbl_status.configure(text="Mohon masukkan kalimat bahasa Bali.", text_color="orange")
+            self.lbl_status.configure(text="Mohon masukkan kalimat bahasa Bali.", text_color="orange", font=("Arial", 16))
             return
 
-        self.lbl_status.configure(text="Memproses...", text_color="gray")
+        self.lbl_status.configure(text="Memproses...", text_color="gray", font=("Arial", 16))
         self.update()
 
         # Run CYK Algorithm
@@ -214,10 +214,10 @@ class BaliParserApp(ctk.CTk):
         self.draw_cyk_pyramid(table, tokens)
 
         if is_valid:
-            self.lbl_status.configure(text="✔ Kalimat Valid.", text_color="#2CC985") # Green
+            self.lbl_status.configure(text="✔ Kalimat Valid.", text_color="#2CC985", font=("Arial", 16)) # Green
             self.draw_parse_tree(self.last_tree_structure, tokens)
         else:
-            self.lbl_status.configure(text="✘ Kalimat Tidak Valid.", text_color="#E74C3C") # Red
+            self.lbl_status.configure(text="✘ Kalimat Tidak Valid.", text_color="#E74C3C", font=("Arial", 16)) # Red
             self.canvas_tree.delete("all")
             self.canvas_tree.create_text(
                 self.canvas_tree.winfo_width() / 2, self.canvas_tree.winfo_height() / 2,
@@ -228,7 +228,7 @@ class BaliParserApp(ctk.CTk):
 
     def reset_app(self):
         self.entry_sentence.delete(0, 'end')
-        self.lbl_status.configure(text="Menunggu input kalimat...", text_color="gray")
+        self.lbl_status.configure(text="Menunggu input kalimat...", text_color="gray", font=("Arial", 16))
         self.canvas_table.delete("all")
         self.canvas_tree.delete("all")
         self.last_tree_structure = None
