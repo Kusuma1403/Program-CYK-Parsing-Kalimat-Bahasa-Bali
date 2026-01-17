@@ -91,14 +91,14 @@ def get_bali_grammar():
     # Agar aturan produksi lebih ringkas, kita gabungkan beberapa kategori kata
     # ke dalam variabel terminal gabungan.
 
-    # Terminal untuk Frasa Nomina (NP): Gabungan Noun, PropNoun, Pronoun, Particle, Determiner
-    terminals_np = list_noun + list_prop_noun + list_pronoun + list_part + list_det
+    # Terminal untuk Frasa Nomina (NP): Gabungan Noun, PropNoun, Pronoun
+    terminals_np = list_noun + list_prop_noun + list_pronoun
     
     # Terminal untuk Subjek (S): Subjek umumnya diisi oleh NP
     terminals_s = terminals_np # S -> NP (Flattened)
     
-    # Terminal untuk Pelengkap (Pel): Pelengkap bisa berupa NP atau Verb atau Waktu
-    terminals_pel = terminals_np + list_verb + list_noun_time + list_prop_noun 
+    # Terminal untuk Pelengkap (Pel): Pelengkap bisa berupa NP atau Verb
+    terminals_pel = terminals_np + list_verb
 
     # --- 3. STRUKTUR GRAMMAR (DICTIONARY) ---
     # Mendefinisikan aturan produksi utama.
@@ -145,7 +145,7 @@ def get_bali_grammar():
         # Keterangan waktu, tempat, cara
         "Ket": [["Prep", "NP"], ["Prep", "Adj_time"], ["Prep", "NP_time"], 
                 ["PP", "PP"], ["NP_time", "Noun_time"], ["NP_time", "Det"], 
-                ["NumP", "NP_time"], ["PP", "NP_time"]] + [[w] for w in list_noun_time],
+                ["NumP", "NP_time"], ["PP", "NP_time"]] + [[w] for w in list_noun_time] + [[w] for w in list_num],
         
         # -- FRASA NOMINA (NP) --
         "NP": [["NP", "Noun"], ["Part", "NP"], ["NP", "Det"], ["NP", "Pronoun"], 
@@ -321,11 +321,10 @@ def get_parse_tree_structure(grammar, table, tokens):
                     B, C = rhs[0], rhs[1]
 
                     # Kita harus mencari titik potong 'k' yang valid.
-                    # Substring dari i sampai j dipecah menjadi [i...k] dan [k+1...j]
-                    for k in range(i, j):
-                        # CEK VALIDITAS:
-                        # Apakah variabel B ada di sel tabel kiri (i, k)?
-                        # DAN variabel C ada di sel tabel kanan (k+1, j)?
+                    # Loop dari KANAN ke KIRI (range mundur).
+                    # Ini memprioritaskan "Anak Kiri Besar" (Greedy Left).
+                    # Dengan loop mundur, kita cek k di posisi paling kanan dulu.
+                    for k in range(j - 1, i - 1, -1):
                         if B in table[i][k] and C in table[k+1][j]:
 
                             # Jika ya, berarti kita menemukan jalurnya!
